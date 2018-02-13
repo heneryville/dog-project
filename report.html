@@ -13913,7 +13913,8 @@ Dog percantage (high is good): 1.0
 <p>We have imported some Python modules to get you started, but feel free to import as many modules as you need.  If you end up getting stuck, here's a hint that specifies a model that trains relatively fast on CPU and attains &gt;1% test accuracy in 5 epochs:</p>
 <p><img src="images/sample_cnn.png" alt="Sample CNN"></p>
 <p><strong>Question 4:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.</p>
-<p><strong>Answer:</strong></p>
+<p><strong>Answer:</strong> 
+Mostly, I just copied the architecture shown above. However, I added multiple same-size convolutional layers before the max-pooling. I did this mostly because I've seen the same thing on other architectures. Like any other time that more layers are added, this should add more power to the system at the risk of over fitting. Given that our target accuracy is so low (1%) than overfitting isn't really an issue, so I thought it would help. In actuality, It's quite easy to get to 1% with or without those extra layers. It also looks like even with the layers, that accuracy is generally increasing even after training for 20 minutes. that's not suprising, since we're starting the network from scratch, and we know that something like Resnet took days to train.</p>
 
 </div>
 </div>
@@ -15854,7 +15855,12 @@ I see neither dog nor human
 <h2 id="Step-7:-Test-Your-Algorithm">Step 7: Test Your Algorithm<a class="anchor-link" href="#Step-7:-Test-Your-Algorithm">&#182;</a></h2><p>In this section, you will take your new algorithm for a spin!  What kind of dog does the algorithm think that <strong>you</strong> look like?  If you have a dog, does it predict your dog's breed accurately?  If you have a cat, does it mistakenly think that your cat is a dog?</p>
 <h3 id="(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">(IMPLEMENTATION) Test Your Algorithm on Sample Images!<a class="anchor-link" href="#(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">&#182;</a></h3><p>Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.</p>
 <p><strong>Question 6:</strong> Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.</p>
-<p><strong>Answer:</strong></p>
+<p><strong>Answer:</strong> 
+The output for humans is something I trust very little. Given what we know about adverserial learning, I suspect that even very small changes in the input image will result in completely different recognition. I tested this on other systems, and found it to be true.</p>
+<p>The recognition for dogs is far better than I expected. It didn't figure out the rottweiler, but a Beauceron is pretty close. Most of the other dogs I tried it did a great job on too. That was much better than I expected. The human detection with faces isn't that great either. Some improvement points:</p>
+<p>1) Face recognition is giving poor results. We should not use a face recognizer, and instead train a CNN directly. There are huge corpuses of human photos, and we could use ImageNet for non-human photos.
+2) We use transfer learning from an existing network that was trained to identify a much much wider set of objects than dog breeds. Given that we're using a separate CNN to identify dog-or-not, it makes sense to re-train the network so that it can specialize in dog breeds. There are likely all kinds of features designed for recognizing cans of tuna fish in Resnet that we could repurpose for dog breed recognition. This would mean unfreezing the bottlenneck features and retraining the whole network.
+3) I did get very significant overfitting when doing the transfer learning. More dropout, slower training, and image augmentation would very much help reduce this.</p>
 
 </div>
 </div>
